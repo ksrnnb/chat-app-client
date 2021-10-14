@@ -94,6 +94,46 @@ export class ChatAppServiceClient {
     this.methodInfoCreateMessage);
   }
 
+  methodInfoLogin = new grpcWeb.AbstractClientBase.MethodInfo(
+    chat$app_pb.LoginResponse,
+    (request: chat$app_pb.LoginRequest) => {
+      return request.serializeBinary();
+    },
+    chat$app_pb.LoginResponse.deserializeBinary
+  );
+
+  login(
+    request: chat$app_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null): Promise<chat$app_pb.LoginResponse>;
+
+  login(
+    request: chat$app_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: chat$app_pb.LoginResponse) => void): grpcWeb.ClientReadableStream<chat$app_pb.LoginResponse>;
+
+  login(
+    request: chat$app_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: chat$app_pb.LoginResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/chatpb.ChatAppService/Login',
+        request,
+        metadata || {},
+        this.methodInfoLogin,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/chatpb.ChatAppService/Login',
+    request,
+    metadata || {},
+    this.methodInfoLogin);
+  }
+
   methodInfoHelloMessage = new grpcWeb.AbstractClientBase.MethodInfo(
     chat$app_pb.HelloResponse,
     (request: chat$app_pb.HelloRequest) => {
