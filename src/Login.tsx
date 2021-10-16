@@ -4,16 +4,20 @@ import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Config } from './Config';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import { LoginRequest } from './chatpb/chat-app_pb';
-import { ChatAppServiceClient } from './chatpb/Chat-appServiceClientPb';
-
 const theme = createTheme();
+
+interface LoginRequest {
+  loginId: string
+  password: string
+}
 
 export default function Login() {
   const loginIdName = 'login-id';
@@ -54,22 +58,27 @@ export default function Login() {
     }
   }
 
-  const doLogin = (loginId: string, password: string) => {
-    const request = new LoginRequest();
-    request.setLoginId(loginId);
-    request.setPassword(password);
-
-    const client = new ChatAppServiceClient("http://localhost:8080");
-    return client.login(request, {});
+  const doLogin = (params: LoginRequest) => {
+      return axios.post(Config.apiEndpoint(), params);
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const [loginId, password] = getFormData(event);
+    const req = {loginId: loginId, password: password};
 
     let res;
     try {
-      res = await doLogin(loginId, password);
+      res = await doLogin(req);
+      console.log(res);
+      // ------ RESPONSE ------- //
+      // config: {transitional: {…}, transformRequest: Array(1), transformResponse: Array(1), timeout: 0, adapter: ƒ, …}
+      // data: {message: 'pong'}
+      // headers: {content-length: '18', content-type: 'application/json; charset=utf-8'}
+      // request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
+      // status: 200
+      // statusText: "OK"
+      // [[Prototype]]: Object
     } catch (errorRes) {
       setErrorMessage('ユーザーがみつかりませんでした');
     }
