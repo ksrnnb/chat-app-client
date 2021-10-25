@@ -1,22 +1,28 @@
-import Login from './Login';
+import Login from './page/Login';
+import Home from './page/Home';
+import { ProvideAuth } from './auth/ProvideAuth';
+import {
+  BrowserRouter as Router,
+  Switch,
+} from "react-router-dom";
 import './App.css';
-
-import { HelloRequest } from './chatpb/chat-app_pb';
-import { ChatAppServiceClient } from './chatpb/Chat-appServiceClientPb';
-
-async function sendHello() {
-  const request = new HelloRequest();
-  request.setName("John");
-
-  const client = new ChatAppServiceClient("http://localhost:8080");
-  const res = await client.helloMessage(request, {});
-
-  console.log(res.getMessage());
-}
+import { AuthRoute } from './auth/AuthRoute';
+import { GuestRoute } from './auth/GuestRoute';
 
 function App() {
   return (
-    <Login />
+    <ProvideAuth>
+      <Router>
+        <Switch>
+          <AuthRoute exact={true} path="/">
+            <Home />
+          </AuthRoute>
+          <GuestRoute path="/login">
+            <Login />
+          </GuestRoute>
+        </Switch>
+      </Router>
+    </ProvideAuth >
   );
 }
 

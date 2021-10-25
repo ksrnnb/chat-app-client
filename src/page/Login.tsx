@@ -8,10 +8,12 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import axios from 'axios';
+import { useAuth, User } from '../auth/ProvideAuth';
+import { loginEndpoint } from '../route';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-import { LoginRequest } from './chatpb/chat-app_pb';
-import { ChatAppServiceClient } from './chatpb/Chat-appServiceClientPb';
+import { LoginResponse } from '../response/LoginResponse';
+import { LoginRequest } from '../request/LoginRequest';
 
 const theme = createTheme();
 
@@ -22,6 +24,8 @@ export default function Login() {
   const [isValidLoginId, setValidLoginId] = React.useState(true);
   const [isValidPassword, setValidPassword] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState('');
+
+  const auth = useAuth();
 
   const getFormData = (event: React.FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget);
@@ -54,27 +58,31 @@ export default function Login() {
     }
   }
 
-  const doLogin = (loginId: string, password: string) => {
-    const request = new LoginRequest();
-    request.setLoginId(loginId);
-    request.setPassword(password);
-
-    const client = new ChatAppServiceClient("http://localhost:8080");
-    return client.login(request, {});
+  const doLogin = (params: LoginRequest) => {
+    return axios.post<LoginResponse>(loginEndpoint, params);
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const [loginId, password] = getFormData(event);
+    const req: LoginRequest = { loginId: loginId, password: password };
 
     let res;
     try {
-      res = await doLogin(loginId, password);
+      res = await doLogin(req);
     } catch (errorRes) {
+      console.log(errorRes);
       setErrorMessage('ユーザーがみつかりませんでした');
+      return;
     }
 
-    // TODO: ページ遷移
+    const user: User = {
+      id: res.data.id,
+    };
+
+    auth.signIn(user);
+
+
   };
 
 
@@ -121,8 +129,8 @@ export default function Login() {
               error={!isValidPassword}
               helperText={isValidPassword ? "" : "必須項目です"}
             />
-            { errorMessage === '' ? null :
-                <Alert severity="error">ユーザーが見つかりませんでした</Alert> }
+            {errorMessage === '' ? null :
+              <Alert severity="error">ユーザーが見つかりませんでした</Alert>}
             <Button
               type="submit"
               fullWidth
