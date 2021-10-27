@@ -4,6 +4,7 @@ import {
     Redirect
 } from "react-router-dom";
 import { ReactNode } from 'react';
+import { login } from './Auth';
 
 interface AuthRouteProps {
     children: ReactNode;
@@ -14,6 +15,13 @@ interface AuthRouteProps {
 export function GuestRoute(props: AuthRouteProps) {
     const { children, ...rest } = props;
     let auth = useAuth();
+
+    auth.user || login(auth);
+
+    if (auth.isLoading) {
+        return <></>;
+    }
+
     return (
         <Route
             {...rest}

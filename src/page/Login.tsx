@@ -59,7 +59,7 @@ export default function Login() {
   }
 
   const doLogin = (params: LoginRequest) => {
-    return axios.post<LoginResponse>(loginEndpoint, params);
+    return axios.post<LoginResponse>(loginEndpoint, params, { withCredentials: true });
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -71,7 +71,6 @@ export default function Login() {
     try {
       res = await doLogin(req);
     } catch (errorRes) {
-      console.log(errorRes);
       setErrorMessage('ユーザーがみつかりませんでした');
       return;
     }
@@ -81,10 +80,7 @@ export default function Login() {
     };
 
     auth.signIn(user);
-
-
   };
-
 
   return (
     <ThemeProvider theme={theme}>

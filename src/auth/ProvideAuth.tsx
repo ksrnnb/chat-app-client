@@ -4,8 +4,10 @@ export interface User {
     id: number
 }
 
-interface AuthContextInterface {
+export interface AuthContextInterface {
     user: User | null;
+    isLoading: boolean;
+    setLoading(b: boolean): void;
     signIn(user: User): void;
     signOut(): void;
     isLoggedIn(): boolean;
@@ -13,6 +15,8 @@ interface AuthContextInterface {
 
 const defaultAuthContext: AuthContextInterface = {
     user: null,
+    isLoading: true,
+    setLoading: (b: boolean) => { },
     signIn: (user: User) => { },
     signOut: () => { },
     isLoggedIn: () => {
@@ -38,6 +42,7 @@ export function useAuth() {
 
 function useProvideAuth(): AuthContextInterface {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setLoading] = useState<boolean>(true);
 
     const signIn = (user: User) => {
         setUser(user);
@@ -51,5 +56,5 @@ function useProvideAuth(): AuthContextInterface {
         return user !== null;
     }
 
-    return { user, signIn, signOut, isLoggedIn };
+    return { user, isLoading, setLoading, signIn, signOut, isLoggedIn };
 }
