@@ -4,20 +4,18 @@ import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Config } from './Config';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from 'axios';
+import { useAuth, User } from '../auth/ProvideAuth';
+import { loginEndpoint } from '../route';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { LoginResponse } from '../response/LoginResponse';
+import { LoginRequest } from '../request/LoginRequest';
 
 const theme = createTheme();
-
-interface LoginRequest {
-  loginId: string
-  password: string
-}
 
 export default function Login() {
   const loginIdName = 'login-id';
@@ -26,6 +24,8 @@ export default function Login() {
   const [isValidLoginId, setValidLoginId] = React.useState(true);
   const [isValidPassword, setValidPassword] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState('');
+
+  const auth = useAuth();
 
   const getFormData = (event: React.FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget);
@@ -59,33 +59,28 @@ export default function Login() {
   }
 
   const doLogin = (params: LoginRequest) => {
-      return axios.post(Config.apiEndpoint(), params);
+    return axios.post<LoginResponse>(loginEndpoint, params, { withCredentials: true });
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const [loginId, password] = getFormData(event);
-    const req = {loginId: loginId, password: password};
+    const req: LoginRequest = { loginId: loginId, password: password };
 
     let res;
     try {
       res = await doLogin(req);
-      console.log(res);
-      // ------ RESPONSE ------- //
-      // config: {transitional: {…}, transformRequest: Array(1), transformResponse: Array(1), timeout: 0, adapter: ƒ, …}
-      // data: {message: 'pong'}
-      // headers: {content-length: '18', content-type: 'application/json; charset=utf-8'}
-      // request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
-      // status: 200
-      // statusText: "OK"
-      // [[Prototype]]: Object
     } catch (errorRes) {
       setErrorMessage('ユーザーがみつかりませんでした');
+      return;
     }
 
-    // TODO: ページ遷移
-  };
+    const user: User = {
+      id: res.data.id,
+    };
 
+    auth.signIn(user);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -130,8 +125,8 @@ export default function Login() {
               error={!isValidPassword}
               helperText={isValidPassword ? "" : "必須項目です"}
             />
-            { errorMessage === '' ? null :
-                <Alert severity="error">ユーザーが見つかりませんでした</Alert> }
+            {errorMessage === '' ? null :
+              <Alert severity="error">ユーザーが見つかりませんでした</Alert>}
             <Button
               type="submit"
               fullWidth
