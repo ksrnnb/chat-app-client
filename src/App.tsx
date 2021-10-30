@@ -9,23 +9,28 @@ import {
 import './App.css';
 import { AuthRoute } from './auth/AuthRoute';
 import { GuestRoute } from './auth/GuestRoute';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme();
 
 function App() {
   return (
     <ProvideAuth>
-      <Router>
-        <Switch>
-          <AuthRoute exact={true} path="/">
-            <Home />
-          </AuthRoute>
-          <AuthRoute exact={true} path="/rooms">
-            <Rooms />
-          </AuthRoute>
-          <GuestRoute path="/login">
-            <Login />
-          </GuestRoute>
-        </Switch>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Switch>
+            <AuthRoute exact={true} path="/">
+              <Home />
+            </AuthRoute>
+            <AuthRoute exact={true} path="/rooms">
+              <Rooms />
+            </AuthRoute>
+            <GuestRoute path="/login">
+              <Login />
+            </GuestRoute>
+          </Switch>
+        </Router>
+      </ThemeProvider>
     </ProvideAuth >
   );
 }
