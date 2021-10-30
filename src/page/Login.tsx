@@ -11,11 +11,8 @@ import Container from '@mui/material/Container';
 import axios from 'axios';
 import { useAuth, User } from '../auth/ProvideAuth';
 import { loginEndpoint } from '../route';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { LoginResponse } from '../response/LoginResponse';
 import { LoginRequest } from '../request/LoginRequest';
-
-const theme = createTheme();
 
 export default function Login() {
   const loginIdName = 'login-id';
@@ -83,7 +80,6 @@ export default function Login() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -137,7 +133,6 @@ export default function Login() {
             </Button>
           </Box>
         </Box>
-      </Container>
-    </ThemeProvider>
+    </Container>
   );
 }
