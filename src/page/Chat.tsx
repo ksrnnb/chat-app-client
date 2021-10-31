@@ -9,7 +9,7 @@ import NavBar from '../components/NavBar';
 import Message from '../components/Message';
 import ChatInput from '../components/ChatInput';
 import { Room } from '../domain/Room';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GetRoomResponse } from "../response/GetRoomResponse";
 import { useParams } from "react-router";
 
@@ -29,10 +29,20 @@ interface ChatRoomParams {
 export default function Chat() {
     const [room, setRoom] = useState<Room | null>(null);
     const { id } = useParams<ChatRoomParams>();
+    const scrollButtonRef = useRef<HTMLDivElement>(null);
+    const updateRoom = () => {
+        fetchRoom(setRoom, id);
+    }
 
     useEffect(() => {
-        fetchRoom(setRoom, id);
-    }, [id]);
+        const initialize = async () => {
+            await fetchRoom(setRoom, id);
+            scrollButtonRef?.current?.scrollIntoView();
+        }
+        initialize();
+        const executeTimeMilliSecond = 5000;
+        setInterval(updateRoom, executeTimeMilliSecond);
+    }, []);
 
     return (
         <>
@@ -42,17 +52,20 @@ export default function Chat() {
                     <Container component="main" maxWidth="md">
                         <CssBaseline />
                             <Box sx={{
-                                marginTop: 8,
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
+                        height: 800,
+                        overflow: 'auto',
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}>
                         {
                             room.messages.map((message) => {
                                 return <Message key={message.id} message={message} />;
                             })
                         }
+                        <div ref={scrollButtonRef} />
                             </Box>
-                    <ChatInput />
+                    <ChatInput updateRoom={updateRoom} />
                     </Container>
                 </>
             }

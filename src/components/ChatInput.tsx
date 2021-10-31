@@ -28,7 +28,11 @@ const sendMessage = async (roomId: string, message: string) => {
     return res.data;
 }
 
-export default function ChatInput() {
+interface ChatInputProps {
+    updateRoom(): void
+}
+
+export default function ChatInput(props: ChatInputProps) {
     const [message, setMessage] = useState('');
     const { id } = useParams<ChatRoomParams>();
 
@@ -38,6 +42,8 @@ export default function ChatInput() {
 
     const handleClick = () => {
         sendMessage(id, message);
+        setMessage('');
+        props.updateRoom();
     }
 
     return (
