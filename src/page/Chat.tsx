@@ -32,7 +32,7 @@ export default function Chat() {
 
     useEffect(() => {
         fetchRoom(setRoom, id);
-    }, []);
+    }, [id]);
 
     return (
         <>
