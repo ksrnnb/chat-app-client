@@ -7,7 +7,6 @@ import {
 import { roomsEndpoint } from "../route";
 import { useState } from 'react';
 import { useParams } from "react-router";
-import { useAuth } from '../auth/ProvideAuth';
 import { SendMessageResponse } from '../response/SendMessageResponse';
 import { SendMessageRequest } from '../request/SendMessageRequest';
 
@@ -15,10 +14,9 @@ interface ChatRoomParams {
     id: string;
 }
 
-const sendMessage = async (roomId: string, message: string, userId: number) => {
+const sendMessage = async (roomId: string, message: string) => {
     const req: SendMessageRequest = {
-        userId: userId,
-        text: message,
+        message: message,
     };
 
     const res = await axios.post<SendMessageResponse>(
@@ -30,21 +28,22 @@ const sendMessage = async (roomId: string, message: string, userId: number) => {
     return res.data;
 }
 
-export default function ChatInput() {
+interface ChatInputProps {
+    updateRoom(): void
+}
+
+export default function ChatInput(props: ChatInputProps) {
     const [message, setMessage] = useState('');
     const { id } = useParams<ChatRoomParams>();
-    const auth = useAuth();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
     }
 
     const handleClick = () => {
-        if (auth.user === null) {
-            return;
-        }
-
-        sendMessage(id, message, auth.user.id);
+        sendMessage(id, message);
+        setMessage('');
+        props.updateRoom();
     }
 
     return (

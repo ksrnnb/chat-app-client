@@ -17,7 +17,7 @@ export default function MessageElement(props: MessageProps) {
 
     return (
         user.id === props.message.userId ?
-            <LeftMessage message={props.message} /> :
-            <RightMessage message={props.message} />
+            <RightMessage message={props.message} /> :
+            <LeftMessage message={props.message} />
     );
 }
