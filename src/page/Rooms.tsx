@@ -10,7 +10,6 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Typography
 } from '@mui/material'
 import NavBar from '../components/NavBar';
 import { Room } from '../domain/Room';

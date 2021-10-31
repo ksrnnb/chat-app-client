@@ -1,23 +1,17 @@
 import axios from "axios";
 import { roomsEndpoint } from "../route";
 import {
-    Avatar,
     Box,
     Container,
     CssBaseline,
-    Grid,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
 } from '@mui/material';
 import NavBar from '../components/NavBar';
+import Message from '../components/Message';
+import ChatInput from '../components/ChatInput';
 import { Room } from '../domain/Room';
 import { useState, useEffect } from "react";
 import { GetRoomResponse } from "../response/GetRoomResponse";
 import { useParams } from "react-router";
-import { URLSearchParams } from "url";
 
 const fetchRoom = async (setRoom: React.Dispatch<React.SetStateAction<Room | null>>, roomId: string) => {
     const res = await axios.get<GetRoomResponse>(
@@ -52,7 +46,13 @@ export default function Chat() {
                                 display: 'flex',
                                 flexDirection: 'column',
                             }}>
+                        {
+                            room.messages.map((message) => {
+                                return <Message key={message.id} message={message} />;
+                            })
+                        }
                             </Box>
+                    <ChatInput />
                     </Container>
                 </>
             }
