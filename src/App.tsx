@@ -1,6 +1,7 @@
 import Login from './page/Login';
 import Home from './page/Home';
 import Rooms from './page/Rooms';
+import Chat from './page/Chat';
 import { ProvideAuth } from './auth/ProvideAuth';
 import {
   BrowserRouter as Router,
@@ -24,6 +25,9 @@ function App() {
             </AuthRoute>
             <AuthRoute exact={true} path="/rooms">
               <Rooms />
+            </AuthRoute>
+            <AuthRoute exact={true} path="/rooms/:id">
+              <Chat />
             </AuthRoute>
             <GuestRoute path="/login">
               <Login />
