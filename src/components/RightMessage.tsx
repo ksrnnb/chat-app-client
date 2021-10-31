@@ -14,6 +14,7 @@ export default function RightMessage(props: MessageProps) {
     const message = props.message;
     return (
         <Box sx={{
+            mb: 2,
             maxWidth: 300,
             marginLeft: 'auto',
         }}>
