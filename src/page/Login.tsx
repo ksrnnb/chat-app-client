@@ -10,8 +10,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from 'axios';
 import { useAuth, User } from '../auth/ProvideAuth';
-import { loginEndpoint } from '../route';
+import { loginEndpoint, tokenEndpoint } from '../route';
 import { LoginResponse } from '../response/LoginResponse';
+import { TokenResponse } from '../response/TokenResponse';
 import { LoginRequest } from '../request/LoginRequest';
 
 export default function Login() {
@@ -55,7 +56,10 @@ export default function Login() {
     }
   }
 
-  const doLogin = (params: LoginRequest) => {
+  const doLogin = async (params: LoginRequest) => {
+    const res = await axios.get<TokenResponse>(tokenEndpoint, { withCredentials: true });
+    params.token = res.data.token;
+
     return axios.post<LoginResponse>(loginEndpoint, params, { withCredentials: true });
   }
 
