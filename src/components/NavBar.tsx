@@ -47,7 +47,7 @@ export default function NavBar(props: NavBarProps) {
     }
 
     return (
-        <AppBar position="static" enableColorOnDark={true}>
+        <AppBar position="fixed" enableColorOnDark={true}>
             <Toolbar>
                 {props.needBackIcon &&
                     <Tooltip title="戻る">
