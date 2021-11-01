@@ -4,9 +4,10 @@ import {
     Button,
     TextField
 } from '@mui/material';
-import { roomsEndpoint } from "../route";
+import { roomsEndpoint, tokenEndpoint } from "../route";
 import { useState } from 'react';
 import { useParams } from "react-router";
+import { TokenResponse } from '../response/TokenResponse';
 import { SendMessageResponse } from '../response/SendMessageResponse';
 import { SendMessageRequest } from '../request/SendMessageRequest';
 
@@ -15,8 +16,11 @@ interface ChatRoomParams {
 }
 
 const sendMessage = async (roomId: string, message: string) => {
+    const tokenRes = await axios.get<TokenResponse>(tokenEndpoint, { withCredentials: true });
+
     const req: SendMessageRequest = {
         message: message,
+        token: tokenRes.data.token,
     };
 
     const res = await axios.post<SendMessageResponse>(

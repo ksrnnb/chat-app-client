@@ -9,7 +9,9 @@ import {
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useHistory } from "react-router";
-import { logoutEndpoint } from '../route';
+import { logoutEndpoint, tokenEndpoint } from '../route';
+import { LogoutRequest } from '../request/LogoutRequest';
+import { TokenResponse } from '../response/TokenResponse';
 import { useAuth, AuthContextInterface } from '../auth/ProvideAuth';
 
 interface NavBarProps {
@@ -18,9 +20,15 @@ interface NavBarProps {
 }
 
 const logout = async (auth: AuthContextInterface) => {
+    const tokenRes = await axios.get<TokenResponse>(tokenEndpoint, { withCredentials: true });
+
+    const req: LogoutRequest = {
+        token: tokenRes.data.token,
+    };
+
     await axios.post(
         logoutEndpoint,
-        {},
+        req,
         { withCredentials: true }
     );
 
